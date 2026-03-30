@@ -1,0 +1,189 @@
+# cPanel Deployment Configuration
+# Configuration pour le déploiement d'un site statique sur cPanel
+
+version: 2.0
+
+# Définition de l'environnement
+environment:
+  name: production
+  type: static
+
+# Configuration du déploiement
+deployment:
+  # Type de déploiement
+  type: static_site
+  
+  # Répertoire de destination sur le serveur
+  target_directory: public_html
+  
+  # Fichiers à déployer
+  include:
+    - "*.html"
+    - "*.css"
+    - "*.js"
+    - "*.png"
+    - "*.jpg"
+    - "*.jpeg"
+    - "*.gif"
+    - "*.svg"
+    - "*.ico"
+    - "*.webp"
+    - "*.woff"
+    - "*.woff2"
+    - "*.ttf"
+    - "*.eot"
+  
+  # Fichiers à exclure
+  exclude:
+    - ".DS_Store"
+    - ".git/"
+    - ".gitignore"
+    - "*.md"
+    - "README*"
+    - ".cpanel.yml"
+    - ".env*"
+    - "node_modules/"
+    - "*.log"
+  
+  # Compression des fichiers statiques
+  compression:
+    enabled: true
+    types:
+      - "text/html"
+      - "text/css"
+      - "application/javascript"
+      - "application/json"
+      - "image/svg+xml"
+
+# Configuration des en-têtes HTTP
+headers:
+  # Sécurité
+  security:
+    X-Content-Type-Options: "nosniff"
+    X-Frame-Options: "SAMEORIGIN"
+    Referrer-Policy: "strict-origin-when-cross-origin"
+    Permissions-Policy: "geolocation=(), microphone=(), camera=()"
+  
+  # Cache pour les fichiers statiques
+  cache:
+    "*.css": "public, max-age=31536000, immutable"
+    "*.js": "public, max-age=31536000, immutable"
+    "*.png": "public, max-age=31536000, immutable"
+    "*.jpg": "public, max-age=31536000, immutable"
+    "*.jpeg": "public, max-age=31536000, immutable"
+    "*.gif": "public, max-age=31536000, immutable"
+    "*.svg": "public, max-age=31536000, immutable"
+    "*.ico": "public, max-age=31536000, immutable"
+    "*.woff": "public, max-age=31536000, immutable"
+    "*.woff2": "public, max-age=31536000, immutable"
+    "*.ttf": "public, max-age=31536000, immutable"
+    "*.html": "public, max-age=3600, must-revalidate"
+
+# Configuration des redirections
+redirects:
+  # Redirection www vers non-www
+  - from: "www.site-de-rencontre-gay.com"
+    to: "https://site-de-rencontre-gay.com"
+    status: 301
+  
+  # Redirection HTTP vers HTTPS
+  - from: "http://site-de-rencontre-gay.com"
+    to: "https://site-de-rencontre-gay.com"
+    status: 301
+  
+  # Redirection des pages spécifiques si nécessaire
+  # - from: "/ancienne-page"
+  #   to: "/nouvelle-page"
+  #   status: 301
+
+# Configuration des pages d'erreur
+error_pages:
+  404: "/404.html"
+  500: "/500.html"
+
+# Configuration de la performance
+performance:
+  # Activer la compression Gzip
+  gzip: true
+  
+  # Minification (si applicable)
+  minify:
+    html: true
+    css: true
+    js: true
+  
+  # Lazy loading pour les images
+  lazy_loading: true
+
+# Configuration SSL/TLS
+ssl:
+  # Forcer HTTPS
+  force_https: true
+  
+  # HSTS (HTTP Strict Transport Security)
+  hsts:
+    enabled: true
+    max_age: 31536000
+    include_subdomains: false
+    preload: false
+
+# Configuration des backups
+backup:
+  # Activer les backups automatiques
+  enabled: true
+  
+  # Fréquence des backups
+  frequency: "daily"
+  
+  # Rétention des backups
+  retention: 7
+
+# Monitoring et logs
+monitoring:
+  # Activer les logs d'accès
+  access_logs: true
+  
+  # Activer les logs d'erreur
+  error_logs: true
+  
+  # Notifications en cas d'erreur
+  notifications: false
+
+# Configuration spécifique à l'application
+application:
+  # Nom de l'application
+  name: "site-de-rencontre-gay"
+  
+  # Version de l'application
+  version: "1.0.0"
+  
+  # Environnement
+  environment: "production"
+  
+  # Domaine principal
+  domain: "site-de-rencontre-gay.com"
+  
+  # Domaines additionnels si nécessaire
+  # additional_domains:
+  #   - "www.site-de-rencontre-gay.com"
+  
+  # Configuration PHP (si nécessaire pour certaines fonctionnalités)
+  php:
+    version: "8.1"
+    memory_limit: "256M"
+    max_execution_time: "300"
+    upload_max_filesize: "10M"
+    post_max_size: "10M"
+
+# Déploiement
+deploy:
+  # Script de déploiement (si nécessaire)
+  pre_deploy:
+    - echo "Début du déploiement..."
+  
+  post_deploy:
+    - echo "Déploiement terminé avec succès!"
+    - chmod 644 *.html *.css *.js
+    - find . -type f -name "*.html" -exec chmod 644 {} \;
+    - find . -type f -name "*.css" -exec chmod 644 {} \;
+    - find . -type f -name "*.js" -exec chmod 644 {} \;
