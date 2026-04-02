@@ -1,0 +1,115 @@
+# Fichier .htaccess pour site-de-rencontre-gay.com
+# Redirection WWW vers non-www et optimisations
+
+# Activation du moteur de réécriture
+RewriteEngine On
+
+# Redirection de www vers non-www (HTTPS)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L,NE]
+
+# Forcer HTTPS (si nécessaire pour les connexions non sécurisées)
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
+
+# Compression Gzip
+<IfModule mod_deflate.c>
+    # Compression des fichiers texte
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    
+    # Compression des fichiers webfonts
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+</IfModule>
+
+# Cache navigateur
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Documents HTML
+    ExpiresByType text/html "access plus 1 hour"
+    
+    # Fichiers CSS et JavaScript
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType application/x-javascript "access plus 1 year"
+    
+    # Images
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/ico "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # Webfonts
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/x-font-ttf "access plus 1 year"
+    ExpiresByType application/x-font-opentype "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+    
+    # Fichiers PDF
+    ExpiresByType application/pdf "access plus 1 year"
+</IfModule>
+
+# En-têtes de sécurité
+<IfModule mod_headers.c>
+    # Protection contre le clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Protection contre le MIME-type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Politique de référence
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Politique de permissions
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+    
+    # HSTS (uniquement si HTTPS est activé)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+    
+    # Cache control pour les fichiers statiques
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$">
+        Header always set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # Cache control pour les fichiers HTML
+    <FilesMatch "\.(html)$">
+        Header always set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# Pages d'erreur personnalisées (si vous les créez)
+# ErrorDocument 404 /404.html
+# ErrorDocument 500 /500.html
+
+# Options de sécurité supplémentaires
+# Désactiver la navigation de répertoires
+Options -Indexes
+
+# Empêcher l'accès aux fichiers sensibles
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "\.(log|md|txt|bak|tmp)$">
+    Require all denied
+</FilesMatch>
+
+# Charset par défaut
+AddDefaultCharset UTF-8
